@@ -1,0 +1,61 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/textures/bird.png" type="Texture" id=1]
+[ext_resource path="res://src/actors/Player.gd" type="Script" id=2]
+
+[sub_resource type="Animation" id=1]
+resource_name = "flap"
+length = 0.4
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("player:region_rect")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ Rect2( -0.0301895, 0, 51.0302, 36.0892 ), Rect2( 51, 0, 51, 36 ), Rect2( 102, 0, 51, 36 ) ]
+}
+
+[sub_resource type="CapsuleShape2D" id=2]
+radius = 17.8684
+height = 9.90195
+
+[node name="Player" type="KinematicBody2D"]
+collision_mask = 6
+script = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "flap"
+anims/flap = SubResource( 1 )
+
+[node name="player" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 51, 0, 51, 36 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource( 2 )
+
+[node name="HurtBox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+rotation = 1.5708
+shape = SubResource( 2 )
+
+[node name="PipeClear" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PipeClear"]
+rotation = 1.5708
+shape = SubResource( 2 )
+
+[connection signal="body_entered" from="HurtBox" to="." method="_hit_pipe"]
+[connection signal="body_entered" from="PipeClear" to="." method="_cleared_pipe"]
